@@ -1,59 +1,41 @@
-# Visual documentation
+# Hardware and IoT interface gallery
 
-The photos and recordings below come from the original project materials. They illustrate the final physical assembly, the electronics and underside of the board, and the browser chess interface. They are **not** a substitute for a clean build or measured system-performance results.
+The visual record covers the **completed physical system**, the underside electronics and gantry, and the **ESP-hosted chess interface**.
 
-## Videos
+## Finished chessboard
 
-- [Quick demonstration — edited excerpt (~43 s)](../media/demo/physical-chessboard-demo.mp4): shortened presentation of physical hardware and on-screen chess interface.
-- [Full demonstration — optimized MP4 (~77 s)](../media/demo/physical-chessboard-full-demo.mp4): the entire supplied recording, re-encoded for GitHub playback.
-- [Animated preview](../media/demo/physical-chessboard-preview.gif): short, looping illustration from the physical-board footage.
+![Finished automated chessboard](../media/photos/chessboard-finished.jpg)
 
-### What the footage supports
+The chessboard uses a magnetic game-piece system with the actuating mechanism situated beneath the playing surface.
 
-It shows a real chessboard, physical interactions and a digital chess interface during a demonstration. It does **not** by itself verify move-detection accuracy, autonomous-motion success rate, hardware calibration, performance, or all remote-play modes.
+## Underlying mechanism and electronics
 
-## Hardware photo tour
+| Mechanical assembly | Electronics and motion hardware |
+|---|---|
+| ![Mechanical mechanism underneath the board](../media/photos/chessboard-underside.jpg) | ![Electronics and motion assembly](../media/photos/electronics-and-motion.jpg) |
 
-### Finished chessboard and piece arrangement
+| Sensor and wiring area | Electronics close-up |
+|---|---|
+| ![Sensor layout](../media/photos/sensor-array.jpg) | ![Electronic components](../media/photos/electronics-closeup.jpg) |
 
-![Finished glass chessboard and pieces](../media/photos/chessboard-finished.jpg)
+## IoT chess web application
 
-![Chess pieces on the completed board](../media/photos/chess-pieces.jpg)
+| ESP portal | Chess game interface |
+|---|---|
+| ![Web portal](../media/iot-interface/chess-portal.png) | ![Web chessboard](../media/iot-interface/remote-chess-game.png) |
 
-The physical chessboard uses a glass playing surface over an enclosed mechatronic assembly.
+The web screenshots come directly from the interface HTML embedded in the ESP firmware, rendered in a browser at the initial UI state. The gameplay screen shows the chess pieces, captured-piece section, promotion options, turn display and countdown clocks.
 
-### Underside and sensing
+## Physical demonstration
 
-![Board underside view](../media/photos/chessboard-underside.jpg)
+[![Animated demonstration of the automated board](../media/demo/physical-chessboard-preview.gif)](../media/demo/physical-chessboard-full-demo.mp4)
 
-![Sensor array view](../media/photos/sensor-array.jpg)
+[Full video](../media/demo/physical-chessboard-full-demo.mp4) · [Short excerpt](../media/demo/physical-chessboard-demo.mp4)
 
-The photos document internal mounting and wiring; the detailed sensor count comes from the implementation report and is marked as such in the hardware documentation.
+## Engineering diagrams
 
-### Electronics and mechanical integration
+- [System architecture](diagrams/system-architecture.svg)
+- [Physical move sequence](diagrams/physical-move-sequence.svg)
+- [Remote communication](diagrams/remote-communication.svg)
 
-![Electronics close-up](../media/photos/electronics-closeup.jpg)
-
-![Actuation electronics and internal assembly](../media/photos/electronics-and-motion.jpg)
-
-The visible wiring and mechanisms demonstrate the physical integration effort. Use [electronics](../hardware/electronics/ELECTRONICS_AND_PINOUT.md) and [mechanical design](../hardware/mechanics/MECHANICAL_DESIGN.md) for source-grounded technical details.
-
-## Architecture diagrams
-
-Each diagram is included as rendered `.svg` and editable Graphviz `.dot` source. They describe the selected code and original project report rather than independently verified wiring.
-
-### Subsystem architecture
-
-![Physical sensing, Raspberry Pi orchestration, actuation and remote IoT flow](diagrams/system-architecture.svg)
-
-### A commanded physical move
-
-![Example commanded chess move logic](diagrams/physical-move-sequence.svg)
-
-This sequence is simplified; the implementation contains extra handling for some capture and movement cases.
-
-### Communication interfaces
-
-![Serial MQTT and HTTP interfaces](diagrams/remote-communication.svg)
-
-The network-topic strings are from the selected baseline firmware and are subject to the ESP revision caveat in [the audit](ESP_REVISION_AUDIT.md).
+The diagram sources in `.dot` format are stored alongside the original SVG outputs.

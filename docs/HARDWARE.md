@@ -1,18 +1,25 @@
-# Hardware overview
+# Hardware architecture
 
-This repository documents an **as-reported** physical AI chessboard, not a newly manufactured build. The final University of Balamand implementation report (June 2, 2025, pp. 29–38) describes:
+The automated chessboard combines a sensor-rich game surface, a positioning gantry beneath that surface, embedded controllers, and a separate remote-play network layer.
 
-- A single **2 mm glass** playing surface with **5 × 5 cm** squares
-- A wooden enclosure and belt-driven, two-stepper Cartesian X–Y carriage
-- A reversible carriage-mounted electromagnet
-- **72 Hall-effect sensors** through **5 cascaded multiplexers**
-- A Raspberry Pi 5, Arduino Mega, ESP-based IoT link, and dedicated power supplies
+## Physical arrangement
 
-Read the detailed source-grounded engineering documents:
+The playing area uses 64 chess squares and eight auxiliary sensor locations. Hall-effect sensing provides positional information to the Arduino Mega through multiplexed analog inputs. A movable magnetic carriage under the glass implements controlled piece transfer. The enclosure houses motors, rails, pulleys, wiring and supporting electronics.
 
-- [Mechanical design and dimensions](../hardware/mechanics/MECHANICAL_DESIGN.md)
-- [Electronics, sensor acquisition and pinout](../hardware/electronics/ELECTRONICS_AND_PINOUT.md)
-- [As-built component inventory and procurement caveats](../hardware/bom/COMPONENT_INVENTORY.md)
-- [Report-to-code reconciliation](REPORT_TO_CODE_DISCREPANCIES.md)
+![Chessboard underside](../media/photos/chessboard-underside.jpg)
 
-The original Fritzing file remains at [`hardware/electronics/AutomatedChessboard.fzz`](../hardware/electronics/AutomatedChessboard.fzz). Native mechanical CAD, authoritative wiring signoff and full as-built parts list are **not present** in the shared project materials.
+## Controllers
+
+**Arduino Mega 2560** — sensor multiplexer scanning, LCD updates, button inputs and serial communication.  
+**Raspberry Pi 5** — game-state management, chess AI, serial and MQTT communication, and GPIO-controlled motion outputs.  
+**ESP Wi-Fi gateway** — browser chess interface and MQTT bridge for remote play.
+
+## Motion system
+
+Two orthogonal stepper axes drive the carriage. The Pi code configures DRV8825 microstepping signals and step/direction outputs. A switched electromagnet creates or releases magnetic coupling with pieces; the H-bridge enables the polarity-controlled actuation described by the mechanical design.
+
+## Power architecture
+
+The prototype uses separate power sources for the Raspberry Pi and the motors/electromagnet. The actuation supply is described as **12 V / 11 A**, while the Pi has its own adapter. Electrical current limits, coil ratings, exact protection components and total wiring cannot be established solely from the archived files.
+
+Further details: [electronics and controller signals](../hardware/electronics/ELECTRONICS_AND_PINOUT.md), [mechanical mechanism](../hardware/mechanics/MECHANICAL_DESIGN.md) and [component inventory](../hardware/bom/COMPONENT_INVENTORY.md).

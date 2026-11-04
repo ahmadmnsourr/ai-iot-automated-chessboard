@@ -1,45 +1,24 @@
-# Mechanical design — implemented chessboard
+# Mechanical design and magnetic transport
 
-> **Evidence basis:** University of Balamand, *Automated Chess Board with IoT Integration and AI-Based Gameplay*, implementation report dated **2 June 2025**, pp. 29–33; project photographs in [`media/photos/`](../../media/photos/); source dimensions in [`Main.py`](../../software/raspberry-pi/Main.py). These notes reconstruct the reported final design; no native mechanical CAD was found in the submitted archive.
+The automated chessboard integrates an X–Y positioning mechanism beneath a glass game surface. A magnetic carriage transports the chess pieces while maintaining a conventional chessboard appearance above the surface.
 
-## Top surface and playing areas
+## Surface and playing geometry
 
-- **Board:** 8 × 8 chess squares, **5 × 5 cm** each, giving a nominal **40 × 40 cm** playing grid (not necessarily the total glass size).
-- **Board surface:** a **single 2 mm glass sheet**. The project initially considered two acrylic sheets, but the team changed to glass for lower sliding friction.
-- **Captured-piece area:** one 8-position strip on White's right, described in the report as a graveyard.
-- **Promotion area:** one 8-position strip on White's left. These positions have their own sensors.
-- **Controls:** timer and button area beside the captured-piece area.
+- **Playing grid:** eight rows and eight columns; approximately **5 cm per square** and **40 × 40 cm** nominal playing region.
+- **Surface:** single glass sheet, approximately **2 mm** thick, selected for low-friction movement of the pieces.
+- **Auxiliary locations:** an area for removed/captured pieces and an eight-position region associated with promotion sensing.
+- **Piece coupling:** neodymium magnets at the piece bases interact with the powered carriage electromagnet.
 
-The nominal grid is **not** a verified travel or collision-safe envelope. The exact total enclosure dimensions and limit-switch locations are not available in the shared materials.
+## Gantry and motion
 
-## X–Y transport system
+The mechanism is mounted within a wooden enclosure. The assembly comprises orthogonal moving rails, aluminium guide rods and belt/pulley transmissions driven by two NEMA 17 stepper motors. The documented mechanical layout contains approximately 70 cm supporting rods and 60 cm moving members, with an additional guide rod added to improve stability.
 
-The report describes a Cartesian gantry beneath the glass:
+![Physical transport assembly](../../media/photos/chessboard-underside.jpg)
 
-1. A **wooden rectangular enclosure** holds the assembly.
-2. Two **70 cm fixed aluminium guide rods** (approximately **1.2 cm diameter**) were originally installed, with a **third 70 cm rod added** for support.
-3. Two perpendicular **60 cm aluminium moving rails** are described (approximately **2 cm wide**).
-4. Each motion axis is driven by a **NEMA 17 stepper motor** via a synchronous/timing belt and pulley mechanism.
-5. A carriage carries the **electromagnet**, positioned close to the underside of the playing surface. The vertical gap is adjustable to improve magnetic coupling.
+The electromagnet rides close to the underside of the glass. Coordinated X–Y motion positions it beneath a piece, energizes it for transport and releases the magnetic coupling at the destination. The L298N-associated magnetic drive logic controls the polarity state used by the software.
 
-![Underside and transport mechanism](../../media/photos/chessboard-underside.jpg)
+## Motion geometry in the source
 
-## Magnetic interaction
+The Raspberry Pi coordinator models **5.0 cm square spacing**, uses **quarter-step** DRV8825 microstepping, and contains a **1.27 cm pulley diameter** parameter. A separate motor utility records a different diameter. These values reflect code versions rather than a universally verified mechanical calibration and do not establish a safe travel envelope.
 
-The implementation report says the team selected **N28 neodymium magnets** at the bottom of the pieces after comparing several options. The moving electromagnet's polarity is controlled to distinguish between the two piece polarities. The **L298N** is described as providing the reversing function.
-
-This is a reported construction detail, not a specification for safely energizing the coil. Electromagnet voltage, continuous duty rating, driver thermal limits and protective circuitry must be checked from the actual hardware.
-
-## Motion constants from the published source
-
-The primary Raspberry Pi controller currently sets `DISTANCE_PER_CELL_CM = 5.0` and configures the motor drivers for **quarter-step microstepping**. It also has a drive-pulley diameter parameter of **1.27 cm** and uses an offset of **2.5 cm** in some diagonal/routed moves. These are **software values**, not independently measured mechanical calibration results. A separate `Motors.py` utility contains a **different pulley diameter**; see [`docs/REPORT_TO_CODE_DISCREPANCIES.md`](../../docs/REPORT_TO_CODE_DISCREPANCIES.md).
-
-## What remains unverified
-
-- Carriage origin/homing procedure, end stops, travel limits and reproducible alignment
-- Actual mechanism dimensions after assembly (beyond report values)
-- Gear/pulley tooth pitch and measured steps-per-centimetre
-- Electromagnet lift gap, temperature, and safe duty cycle
-- Positioning accuracy and repeatability across a full 8 × 8 sequence
-
-For an engineering demo, keep hands away from the carriage, avoid running with a loose power supply or unrestrained belt, and validate driver and coil ratings before energizing hardware.
+The mechanical implementation is documented through photographs and descriptive dimensions; a native parametric CAD assembly was not available in the shared project files.

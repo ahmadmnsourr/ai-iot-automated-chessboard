@@ -1,13 +1,13 @@
-# Contributors and academic context
+# Project team
 
-This automated chessboard was a **mechatronics final-year project at the University of Balamand (2025)**.
+**Automated Chessboard with IoT Integration and Chess AI** was designed and developed as a Mechatronics capstone at the University of Balamand.
 
-**Team members — equal contribution as confirmed by the team:**
-- Ahmad Mansour
-- Majd Nasrallah
-- Ziad Hamade
+| Team member | Contribution |
+|---|---|
+| **Ahmad Mansour** | Equal participation in project development, assembly, programming, integration and testing |
+| **Majd Nasrallah** | Equal participation in project development, assembly, programming, integration and testing |
+| **Ziad Hamade** | Equal participation in project development, assembly, programming, integration and testing |
 
-**Academic supervisor:** Dr. Mazen Abi Hussein (as listed in the original project materials).
+**Academic supervisor:** Dr. Mazen Abi Hussein.
 
-The repository does not attribute sole ownership of any shared subsystem to one team member.
-Third-party dependencies and media remain subject to their original licenses. No blanket open-source license has been assigned without confirming agreement from all contributors.
+The team shares credit for the overall project. No individual or exclusive ownership claim is made for the hardware or software subsystems. Third-party libraries and assets retain their original licensing conditions.
