@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♟</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --theme-primary: #b58863;
+      --theme-secondary: #f0d9b5;
+      --theme-text: #2c2c2c;
+      --theme-button-text: white;
+      --container-bg: rgba(240, 217, 181, 0.9);
+      --container-border: rgba(181, 136, 99, 0.3);
+    }
+    
+    body {
+      background-color: var(--theme-secondary);
+      background-image: url('https://images.unsplash.com/photo-1541140134513-85a161dc4a00?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      background-blend-mode: overlay;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--theme-text);
+      transition: all 0.5s ease;
+      padding: 20px;
+    }
+    
+    .container {
+      background-color: var(--container-bg);
+      border-radius: 15px;
+      padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid var(--container-border);
+      backdrop-filter: blur(5px);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }
+    
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--theme-primary), var(--theme-secondary), var(--theme-primary));
+    }
+    
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--theme-text);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      letter-spacing: 2px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .title::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--theme-primary), transparent);
+    }
+    
+    .subtitle {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      margin-bottom: 2.5rem;
+      color: #555;
+    }
+    
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    .menu-btn, .option-btn, .close-modal-btn {
+      padding: 1rem 1.5rem;
+      font-size: 1.2rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      background-color: var(--theme-primary);
+      color: var(--theme-button-text);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 1px;
+    }
+    
+    .menu-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    .menu-btn:hover, .option-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .menu-btn:hover::before {
+      left: 100%;
+    }
+    
+    .menu-btn:active, .option-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .chess-piece-decoration {
+      position: absolute;
+      opacity: 0.1;
+      font-size: 10rem;
+      z-index: -1;
+    }
+    
+    .piece-king {
+      top: 20px;
+      left: 20px;
+    }
+    
+    .piece-queen {
+      bottom: 20px;
+      right: 20px;
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(3px);
+    }
+    
+    .rules-container {
+      background-color: var(--theme-secondary);
+      padding: 2.5rem;
+      border-radius: 15px;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(181, 136, 99, 0.5);
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--theme-text);
+      transition: transform 0.2s;
+    }
+    
+    .close-btn:hover {
+      transform: rotate(90deg);
+    }
+    
+    .rules-title {
+      margin-bottom: 1.5rem;
+      color: var(--theme-text);
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      border-bottom: 2px solid var(--theme-primary);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+    
+    .rules-content {
+      line-height: 1.8;
+      color: var(--theme-text);
+      font-family: 'Montserrat', sans-serif;
+      text-align: left;
+    }
+    
+    .rules-content p {
+      margin-bottom: 1rem;
+    }
+    
+    .rules-content strong {
+      color: var(--theme-primary);
+    }
+    
+    .rules-content ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    /* Modal styling */
+    .modal {
+      display: none;
+      flex-direction: column;
+      gap: 1.5rem;
+      background-color: var(--theme-secondary);
+      padding: 2.5rem;
+      border-radius: 15px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+      max-width: 500px;
+      width: 90%;
+      border: 1px solid rgba(181, 136, 99, 0.5);
+    }
+    
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--theme-text);
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--theme-primary);
+      padding-bottom: 0.5rem;
+    }
+    
+    .close-modal-btn {
+      background-color: var(--theme-text);
+    }
+    
+    .close-modal-btn:hover {
+      background-color: #555;
+    }
+    
+    /* Animation classes */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 2rem 1.5rem;
+      }
+      
+      .title {
+        font-size: 2.5rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+      
+      .menu {
+        max-width: 300px;
+      }
+      
+      .rules-container, .modal {
+        padding: 1.5rem;
+        width: 95%;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .title {
+        font-size: 2rem;
+      }
+      
+      .menu-btn, .option-btn {
+        padding: 0.8rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container animate-fade-in">
+    <div class="chess-piece-decoration piece-king">♔</div>
+    <div class="chess-piece-decoration piece-queen">♕</div>
+    
+    <h1 class="title">FYP Chess Game</h1>
+    <p class="subtitle">"Outsmart, Outplay, Checkmate."</p>
+    
+    <div class="menu">
+      <button class="menu-btn" id="play-btn">Play Chess</button>
+      <button class="menu-btn" id="about-btn">About Chess</button>
+      <button class="menu-btn" id="options-btn">Game Options</button>
+    </div>
+  </div>
+  
+  <!-- Chess Rules Overlay -->
+  <div class="overlay" id="rules-overlay">
+    <div class="rules-container">
+      <button class="close-btn" id="close-rules-btn">✕</button>
+      <h2 class="rules-title">Chess Rules</h2>
+      <div class="rules-content">
+        <p><strong>1. The Board:</strong> Chess is played on an 8x8 grid with alternating light and dark squares.</p>
+        <p><strong>2. The Pieces:</strong> Each player starts with 16 pieces: 1 king, 1 queen, 2 rooks, 2 bishops, 2 knights, and 8 pawns.</p>
+        <p><strong>3. Movement:</strong>
+          <ul>
+            <li><strong>King:</strong> One square in any direction</li>
+            <li><strong>Queen:</strong> Any number of squares in any direction</li>
+            <li><strong>Rook:</strong> Any number of squares horizontally or vertically</li>
+            <li><strong>Bishop:</strong> Any number of squares diagonally</li>
+            <li><strong>Knight:</strong> L-shape (two squares in one direction, then one square perpendicular)</li>
+            <li><strong>Pawn:</strong> Forward one square, captures diagonally</li>
+          </ul>
+        </p>
+        <p><strong>4. Special Moves:</strong>
+          <ul>
+            <li><strong>Castling:</strong> King moves two squares toward a rook, which jumps over</li>
+            <li><strong>En Passant:</strong> Special pawn capture under specific conditions</li>
+            <li><strong>Promotion:</strong> Pawn reaching the last rank becomes any other piece</li>
+          </ul>
+        </p>
+        <p><strong>5. Check:</strong> When a king is under immediate attack by an opponent's piece.</p>
+        <p><strong>6. Checkmate:</strong> When a king is in check and cannot escape, ending the game.</p>
+        <p><strong>7. Draw Conditions:</strong> Stalemate, insufficient material, threefold repetition, or 50-move rule.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Color Options Modal -->
+  <div class="modal" id="color-options">
+    <h2>Choose Board Theme</h2>
+    <button class="option-btn" id="classic-option">Traditional Elegance (Brown & Beige)</button>
+    <button class="option-btn" id="green-option">Forest Focus (Green & Ivory)</button>
+    <button class="option-btn" id="blue-option">Deep Calm (Blue & Silver)</button>
+    <button class="close-modal-btn" id="close-color-btn">Close</button>
+  </div>
+  
+  <!-- Play Options Modal -->
+  <div class="modal" id="play-options">
+    <h2>Choose Your Color</h2>
+    <button class="option-btn" id="white-option">Play as White (Moves First)</button>
+    <button class="option-btn" id="black-option">Play as Black (Defend First)</button>
+    <button class="close-modal-btn" id="close-play-btn">Close</button>
+  </div>
+  
+  <script>
+    // DOM Elements
+    const playBtn = document.getElementById('play-btn');
+    const aboutBtn = document.getElementById('about-btn');
+    const optionsBtn = document.getElementById('options-btn');
+    const rulesOverlay = document.getElementById('rules-overlay');
+    const closeRulesBtn = document.getElementById('close-rules-btn');
+    const colorOptions = document.getElementById('color-options');
+    const closeColorBtn = document.getElementById('close-color-btn');
+    const playOptions = document.getElementById('play-options');
+    const closePlayBtn = document.getElementById('close-play-btn');
+    const container = document.querySelector('.container');
+    
+    // Theme color definitions
+    const themes = {
+      classic: {
+        primary: '#b58863',
+        secondary: '#f0d9b5',
+        text: '#2c2c2c',
+        buttonText: 'white',
+        containerBg: 'rgba(240, 217, 181, 0.9)',
+        containerBorder: 'rgba(181, 136, 99, 0.3)'
+      },
+      green: {
+        primary: '#6b8e23',
+        secondary: '#e6e8c0',
+        text: '#2c2c2c',
+        buttonText: 'white',
+        containerBg: 'rgba(230, 232, 192, 0.9)',
+        containerBorder: 'rgba(107, 142, 35, 0.3)'
+      },
+      blue: {
+        primary: '#4682b4',
+        secondary: '#e6e8f0',
+        text: '#2c2c2c',
+        buttonText: 'white',
+        containerBg: 'rgba(230, 232, 240, 0.9)',
+        containerBorder: 'rgba(70, 130, 180, 0.3)'
+      }
+    };
+    
+    // Current selected theme and player color
+    let selectedTheme = localStorage.getItem('chessTheme') || 'classic';
+    let selectedPlayer = 'white';
+    
+    // Apply theme colors
+    function applyTheme(theme) {
+      const root = document.documentElement;
+      const themeColors = themes[theme];
+      
+      root.style.setProperty('--theme-primary', themeColors.primary);
+      root.style.setProperty('--theme-secondary', themeColors.secondary);
+      root.style.setProperty('--theme-text', themeColors.text);
+      root.style.setProperty('--theme-button-text', themeColors.buttonText);
+      root.style.setProperty('--container-bg', themeColors.containerBg);
+      root.style.setProperty('--container-border', themeColors.containerBorder);
+      
+      // Update the selected theme
+      selectedTheme = theme;
+      localStorage.setItem('chessTheme', theme);
+    }
+    
+    // Start the game with selected options
+    function startGame(playerColor) {
+      selectedPlayer = playerColor;
+      const url = `chessboard.html?theme=${encodeURIComponent(selectedTheme)}&player=${encodeURIComponent(selectedPlayer)}`;
+      window.location.href = url;
+    }
+    
+    // Animation on load
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        container.classList.add('animate-fade-in');
+      }, 100);
+      
+      // Load saved theme
+      applyTheme(selectedTheme);
+      
+      // Set background based on theme
+      document.body.style.backgroundColor = themes[selectedTheme].secondary;
+      document.body.style.backgroundImage = 'url("https://images.unsplash.com/photo-1541140134513-85a161dc4a00?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")';
+    });
+    
+    // Event Listeners with animations
+    playBtn.addEventListener('click', () => {
+      playOptions.style.display = 'flex';
+      setTimeout(() => {
+        playOptions.classList.add('animate-fade-in');
+      }, 10);
+    });
+    
+    aboutBtn.addEventListener('click', () => {
+      rulesOverlay.style.display = 'flex';
+      setTimeout(() => {
+        document.querySelector('.rules-container').classList.add('animate-fade-in');
+      }, 10);
+    });
+    
+    optionsBtn.addEventListener('click', () => {
+      colorOptions.style.display = 'flex';
+      setTimeout(() => {
+        colorOptions.classList.add('animate-fade-in');
+      }, 10);
+    });
+    
+    closeRulesBtn.addEventListener('click', () => {
+      document.querySelector('.rules-container').classList.remove('animate-fade-in');
+      setTimeout(() => {
+        rulesOverlay.style.display = 'none';
+      }, 300);
+    });
+    
+    closeColorBtn.addEventListener('click', () => {
+      colorOptions.classList.remove('animate-fade-in');
+      setTimeout(() => {
+        colorOptions.style.display = 'none';
+      }, 300);
+    });
+    
+    closePlayBtn.addEventListener('click', () => {
+      playOptions.classList.remove('animate-fade-in');
+      setTimeout(() => {
+        playOptions.style.display = 'none';
+      }, 300);
+    });
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === rulesOverlay) {
+        document.querySelector('.rules-container').classList.remove('animate-fade-in');
+        setTimeout(() => {
+          rulesOverlay.style.display = 'none';
+        }, 300);
+      }
+      if (e.target === colorOptions) {
+        colorOptions.classList.remove('animate-fade-in');
+        setTimeout(() => {
+          colorOptions.style.display = 'none';
+        }, 300);
+      }
+      if (e.target === playOptions) {
+        playOptions.classList.remove('animate-fade-in');
+        setTimeout(() => {
+          playOptions.style.display = 'none';
+        }, 300);
+      }
+    });
+    
+    // Color selection functionality
+    document.getElementById('classic-option').addEventListener('click', () => {
+      applyTheme('classic');
+      document.body.style.backgroundColor = themes.classic.secondary;
+    });
+    
+    document.getElementById('green-option').addEventListener('click', () => {
+      applyTheme('green');
+      document.body.style.backgroundColor = themes.green.secondary;
+    });
+    
+    document.getElementById('blue-option').addEventListener('click', () => {
+      applyTheme('blue');
+      document.body.style.backgroundColor = themes.blue.secondary;
+    });
+    
+    // Player selection functionality
+    document.getElementById('white-option').addEventListener('click', () => {
+      startGame('white');
+    });
+    
+    document.getElementById('black-option').addEventListener('click', () => {
+      startGame('black');
+    });
+  </script>
+</body>
+</html>

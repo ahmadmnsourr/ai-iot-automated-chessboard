@@ -1,0 +1,39 @@
+digraph architecture {
+graph [bgcolor="#FFFFFF", fontname="DejaVu Sans", pad="0.25", ranksep="0.68", nodesep="0.33", splines=polyline, outputorder=edgesfirst];
+node [shape=box, style="rounded,filled", color="#B8CDE0", penwidth=1.2, fillcolor="#EFF5FB", fontname="DejaVu Sans", fontcolor="#153049", fontsize=12, margin="0.20,0.16"];
+edge [color="#4C7296", penwidth=1.6, arrowsize=0.76, fontname="DejaVu Sans", fontcolor="#2D536D", fontsize=10];
+
+rankdir=LR;
+label="AI-IoT chessboard · subsystem architecture"; labelloc=t; fontsize=20; fontname="DejaVu Sans"; fontcolor="#153049";
+subgraph cluster_input {label="PHYSICAL CHESSBOARD"; color="#A8BCCC"; style="rounded,dashed";
+sensors [label="Board Hall sensors
+(72 reported)"];
+mux [label="Analog multiplexers"];
+arduino [label="Arduino Mega
+sensing + controls", fillcolor="#E1F2ED"];
+sensors -> mux -> arduino;
+}
+subgraph cluster_compute {label="COORDINATION + AI"; color="#A8BCCC"; style="rounded,dashed";
+pi [label="Raspberry Pi 5
+state + control", fillcolor="#E4EEFB"];
+ai [label="Python chess agent
+Minimax", fillcolor="#E4EEFB"];
+pi -> ai [dir=both, label="move request"];
+}
+subgraph cluster_actuate {label="ACTUATION"; color="#A8BCCC"; style="rounded,dashed";
+step [label="DRV8825 drivers
+X–Y stepper motors",fillcolor="#FFF1DA"];
+mag [label="Electromagnet driver
+piece transport",fillcolor="#FFF1DA"];
+}
+subgraph cluster_remote {label="REMOTE PLAY"; color="#A8BCCC"; style="rounded,dashed";
+browser [label="Browser chess UI"];
+gateway [label="ESP gateway
+HTTP server + MQTT",fillcolor="#E1F2ED"];
+broker [label="MQTT broker"];
+browser -> gateway [dir=both,label="HTTP"];
+gateway -> broker [dir=both,label="topics"];
+}
+arduino -> pi [dir=both,label="USB serial"];
+pi -> step; pi -> mag; pi -> broker [dir=both,label="MQTT"];
+}

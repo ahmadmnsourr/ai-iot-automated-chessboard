@@ -1,0 +1,24 @@
+digraph comms {
+graph [bgcolor="#FFFFFF", fontname="DejaVu Sans", pad="0.25", ranksep="0.68", nodesep="0.33", splines=polyline, outputorder=edgesfirst];
+node [shape=box, style="rounded,filled", color="#B8CDE0", penwidth=1.2, fillcolor="#EFF5FB", fontname="DejaVu Sans", fontcolor="#153049", fontsize=12, margin="0.20,0.16"];
+edge [color="#4C7296", penwidth=1.6, arrowsize=0.76, fontname="DejaVu Sans", fontcolor="#2D536D", fontsize=10];
+
+rankdir=LR;
+label="Chessboard communications · documented interfaces"; labelloc=t; fontsize=20; fontname="DejaVu Sans"; fontcolor="#153049";
+arduino [label="Arduino Mega
+board events + modes",fillcolor="#E1F2ED"];
+pi [label="Raspberry Pi controller
+move processing",fillcolor="#E4EEFB"];
+broker [label="MQTT broker"];
+esp [label="ESP chess gateway",fillcolor="#E1F2ED"];
+web [label="Browser UI"];
+arduino -> pi [dir=both,label="Serial · 9600 baud
+MODE:HvH / MODE:HvAI
+four-char moves"];
+pi -> broker [dir=both,label="publish / subscribe
+RPI-TOPIC · ESP-TOPIC"];
+broker -> esp [dir=both,label="MQTT"];
+esp -> web [dir=both,label="HTTP routes
+/ · /game · /move
+/getmove"];
+}

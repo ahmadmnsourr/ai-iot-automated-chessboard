@@ -1,0 +1,26 @@
+digraph motion {
+graph [bgcolor="#FFFFFF", fontname="DejaVu Sans", pad="0.25", ranksep="0.68", nodesep="0.33", splines=polyline, outputorder=edgesfirst];
+node [shape=box, style="rounded,filled", color="#B8CDE0", penwidth=1.2, fillcolor="#EFF5FB", fontname="DejaVu Sans", fontcolor="#153049", fontsize=12, margin="0.20,0.16"];
+edge [color="#4C7296", penwidth=1.6, arrowsize=0.76, fontname="DejaVu Sans", fontcolor="#2D536D", fontsize=10];
+
+rankdir=TB;
+label="Example commanded chess move · logical execution path"; labelloc=t; fontsize=20; fontname="DejaVu Sans"; fontcolor="#153049";
+start [label="Move received by Pi
+(AI decision or remote move)",fillcolor="#E1F2ED"];
+validate [label="Check move format and game state"];
+position [label="Move carriage to source square
+with electromagnet off"];
+pickup [label="Activate electromagnet
+to engage the selected piece",fillcolor="#FFF1DA"];
+transport [label="Drive X–Y motors along
+source-to-destination movement",fillcolor="#FFF1DA"];
+release [label="Release electromagnet
+at destination",fillcolor="#FFF1DA"];
+sync [label="Update game state and
+communicate move as required"];
+start -> validate -> position -> pickup -> transport -> release -> sync;
+note [shape=note, label="Illustrative normal-move path.
+Special moves/captures may use extra motions.
+Timing/trajectory not independently validated.",fillcolor="#FBF9EE", fontsize=10];
+sync -> note [style=dashed,arrowhead=none];
+}

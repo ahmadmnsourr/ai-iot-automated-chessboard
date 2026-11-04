@@ -1,0 +1,5 @@
+# Indicative dependencies inferred from imports. Versions require hardware validation.
+numpy
+pyserial
+gpiozero
+paho-mqtt<2
